@@ -93,8 +93,6 @@ SUGAR_ICONS = {
 class IconDialog(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self)
-        self.connect('realize', self.__realize_cb)
-
         self.ensure_sugar_structure()
 
         self.theme = Gtk.IconTheme.get_default()
@@ -106,11 +104,12 @@ class IconDialog(Gtk.Window):
         self.x, self.y = (Gdk.Screen.width() / 1.5, Gdk.Screen.height() / 1.5)
         self.set_size_request(self.x, self.y)
 
+        self.icons = None
         toolbox = self.build_toolbar()
-        icons = self.build_scroll()
+        self.icons = self.build_scroll()
 
         grid.attach(toolbox, 0, 1, 1, 1)
-        grid.attach(icons, 0, 2, 1, 1)
+        grid.attach(self.icons, 0, 2, 1, 1)
 
         self.set_decorated(False)
         self.set_skip_pager_hint(True)
@@ -121,12 +120,6 @@ class IconDialog(Gtk.Window):
 
         self.add(grid)
         self.show_all()
-
-    def __realize_cb(self, widget):
-        if self.get_modal():
-            self.get_window().set_cursor(None)
-        else:
-            self.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.WATCH))
 
     def ensure_sugar_structure(self):
         user = os.path.expanduser("~")
