@@ -141,7 +141,7 @@ class ToolbarView(ToolbarBox):
             current += 1
 
     def add_view(self, widget):
-        if len(self._view_icons) > 5:
+        if len(self._view_icons) >= 5:
             for x in self.activity._alerts:
                 self.activity.remove_alert(x)
             alert = NotifyAlert(10)
