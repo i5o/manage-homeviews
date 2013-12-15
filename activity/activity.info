@@ -5,6 +5,6 @@ exec = sugar-activity homeviews.ManageViews
 icon = activity-icon
 activity_version = 1
 show_launcher = yes
-maximum_instances = 1
+single_instance = yes
 license = GPLv2+
 summary = Simple activity for manage Home Views.
