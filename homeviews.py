@@ -30,14 +30,17 @@ from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import ActivityButton
 from sugar3.activity.widgets import StopButton
 from sugar3.graphics.alert import NotifyAlert
+from jarabe.model import desktop
 
 from icondialog import IconDialog
 
 _VIEW_DIR = '/desktop/sugar/desktop'
 _VIEW_ENTRY = 'view_icons'
 _FAVORITE_ENTRY = 'favorite_icons'
+_FAVORITE_NAME_ENTRY = 'favorite_names'
 _VIEW_KEY = '%s/%s' % (_VIEW_DIR, _VIEW_ENTRY)
 _FAVORITE_KEY = '%s/%s' % (_VIEW_DIR, _FAVORITE_ENTRY)
+_FAVORITE_NAME_KEY = '%s/%s' % (_VIEW_DIR, _FAVORITE_NAME_ENTRY)
 
 
 class ManageViews(activity.Activity):
@@ -84,7 +87,7 @@ class ToolbarView(ToolbarBox):
         ToolbarBox.__init__(self)
 
         self.add_btn = ToolButton(icon_name='list-add',
-                                tooltip=_('Add new favorite view'))
+                                  tooltip=_('Add new favorite view'))
         self.insert(self.add_btn, -1)
         self.add_btn.connect('clicked', self.add_view)
 
@@ -92,6 +95,12 @@ class ToolbarView(ToolbarBox):
         self._favorite_icons = {}
         self._view_icons = {}
         self._view_buttons = {}
+        self._favorite_names = {}
+
+        if hasattr(desktop, 'get_favorite_names'):
+            self.favorite_names_enabled = True
+        else:
+            self.favorite_names_enabled = False
 
         separator = Gtk.SeparatorToolItem()
         separator.props.draw = False
@@ -116,28 +125,42 @@ class ToolbarView(ToolbarBox):
         client = GConf.Client.get_default()
         options = client.get(_FAVORITE_KEY)
         options2 = client.get(_VIEW_KEY)
+        options3 = client.get(_FAVORITE_NAME_KEY)
 
         view_icons = []
         favorites_icons = []
+        favorite_names = []
 
-        if options is not None and options2 is not None:
+        if options is not None and options2 is not None and \
+                options3 is not None:
             for gval in options.get_list():
                 favorites_icons.append(gval.get_string())
 
             for gval in options2.get_list():
                 view_icons.append(gval.get_string())
 
-        current = 1
+            for gval in options3.get_list():
+                favorite_names.append(gval.get_string())
+
+        current = 0
         for view_icon in view_icons:
-            label = _('Favorites view %d') % current
+            if self.favorite_names_enabled:
+                try:
+                    label = favorite_names[current]
+                except IndexError:
+                    label = _('Favorites view %d') % (current + 1)
+            else:
+                label = _('Favorites view %d') % (current + 1)
+
             button = ToolbarButton(label=label, icon_name=view_icon)
             page = FavoritePage(button, self, view_icon,
-                favorites_icons[current - 1])
+                                favorites_icons[current], label)
             button.set_page(page)
             self.insert(button, -1)
             self._view_icons[button] = view_icon
-            self._favorite_icons[button] = favorites_icons[current - 1]
+            self._favorite_icons[button] = favorites_icons[current]
             self._view_buttons[button] = button
+            self._favorite_names[button] = label
             current += 1
 
     def add_view(self, widget):
@@ -147,33 +170,41 @@ class ToolbarView(ToolbarBox):
             alert = NotifyAlert(10)
             alert.props.title = _('Limit reached')
             alert.props.msg = _('You have reached the maximum limit of '
-                'favorites views, please delete some before continuing.')
+                                'favorites views, please delete some before '
+                                'continuing.')
             self.activity.add_alert(alert)
             alert.connect('response',
-                lambda x, y: self.activity.remove_alert(x))
+                          lambda x, y: self.activity.remove_alert(x))
             return
 
-        label = _('New favorite view')
+        current = len(self._view_buttons) + 1
+        label = _('Favorites view %d') % current
         button = ToolbarButton(label=label, icon_name='view-radial')
-        page = FavoritePage(button, self, 'view-radial', 'emblem-favorite')
+        page = FavoritePage(button, self, 'view-radial', 'emblem-favorite',
+                            label)
         button.set_page(page)
 
         self._view_icons[button] = 'view-radial'
         self._favorite_icons[button] = 'emblem-favorite'
         self._view_buttons[button] = button
+        if self.favorite_names_enabled:
+            self._favorite_names[button] = label
 
         self.insert(button, -1)
         self.save_to_gconf()
         self.show_all()
 
-    def save_to_gconf(self, icon=False):
+    def save_to_gconf(self, icon=False, name=False):
 
         view_icons = []
         favorite_icons = []
+        favorite_names = []
 
         for button in self._view_buttons:
             view_icons.append(self._view_icons[button])
             favorite_icons.append(self._favorite_icons[button])
+            if self.favorite_names_enabled:
+                favorite_names.append(self._favorite_names[button])
 
         client = GConf.Client.get_default()
         SugarExt.gconf_client_set_string_list(client,
@@ -184,6 +215,11 @@ class ToolbarView(ToolbarBox):
                                               _VIEW_KEY,
                                               view_icons)
 
+        if self.favorite_names_enabled:
+            SugarExt.gconf_client_set_string_list(client,
+                                                  _FAVORITE_NAME_KEY,
+                                                  favorite_names)
+
         if icon:
             for x in self.activity._alerts:
                 self.activity.remove_alert(x)
@@ -192,11 +228,21 @@ class ToolbarView(ToolbarBox):
             alert.props.msg = _('For see icons, restart sugar is needed.')
             self.activity.add_alert(alert)
             alert.connect('response',
-                lambda x, y: self.activity.remove_alert(x))
+                          lambda x, y: self.activity.remove_alert(x))
+        if name:
+            for x in self.activity._alerts:
+                self.activity.remove_alert(x)
+            alert = NotifyAlert(5)
+            alert.props.title = _('View Name')
+            alert.props.msg = _('For seeing View name changes, '
+                                'restarting Sugar is required.')
+            self.activity.add_alert(alert)
+            alert.connect('response',
+                          lambda x, y: self.activity.remove_alert(x))
 
 
 class FavoritePage(Gtk.Toolbar):
-    def __init__(self, button, toolbar, view_icon, favorite_icon):
+    def __init__(self, button, toolbar, view_icon, favorite_icon, label):
         Gtk.Toolbar.__init__(self)
 
         self.toolbar = toolbar
@@ -212,6 +258,13 @@ class FavoritePage(Gtk.Toolbar):
         self.set_favorite_icon.set_tooltip(_('Set the icon of favorites list'))
         self.set_favorite_icon.connect('clicked', self.set_icon, True)
 
+        entry_toolitem = Gtk.ToolItem()
+
+        self.favorite_name_entry = Gtk.Entry()
+        self.favorite_name_entry.set_text(label)
+        self.favorite_name_entry.connect("activate", self.edited_view_name)
+        entry_toolitem.add(self.favorite_name_entry)
+
         self.remove_btn = ToolButton('list-remove')
         self.remove_btn.set_tooltip(_('Remove favorite view'))
         self.remove_btn.connect('clicked', self.remove_view)
@@ -222,6 +275,8 @@ class FavoritePage(Gtk.Toolbar):
 
         self.insert(self.set_view_icon, -1)
         self.insert(self.set_favorite_icon, -1)
+        if self.toolbar.favorite_names_enabled:
+            self.insert(entry_toolitem, -1)
         self.insert(separator, -1)
         self.insert(self.remove_btn, -1)
         self.show_all()
@@ -249,3 +304,9 @@ class FavoritePage(Gtk.Toolbar):
     def remove_view(self, widget):
         self.button.set_expanded(False)
         self.toolbar.remove_item(self.button)
+
+    def edited_view_name(self, entry):
+        label = entry.get_text()
+        self.toolbar._favorite_names[self.button] = label
+
+        self.toolbar.save_to_gconf(False, True)
