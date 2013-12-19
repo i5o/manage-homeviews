@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-11 21:48-0200\n"
+"POT-Creation-Date: 2013-12-19 12:27-0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,20 +21,20 @@ msgstr ""
 msgid "Manage HomeViews"
 msgstr "Administrar vistas principales"
 
-#: homeviews.py:87
+#: homeviews.py:94
 msgid "Add new favorite view"
-msgstr "Agregar una nueva vista principal"
+msgstr "Administrar vistas principales"
 
-#: homeviews.py:132
+#: homeviews.py:149 homeviews.py:177
 #, python-format
 msgid "Favorites view %d"
 msgstr "Vista principal %d"
 
-#: homeviews.py:148
+#: homeviews.py:167
 msgid "Limit reached"
 msgstr "Límite alcanzado"
 
-#: homeviews.py:149
+#: homeviews.py:168
 msgid ""
 "You have reached the maximum limit of favorites views, please delete some "
 "before continuing."
@@ -42,27 +42,40 @@ msgstr ""
 "Has alcanzado el número máximo de vistas principales, porfavor elimina "
 "algunas antes de continuar."
 
-#: homeviews.py:156
-msgid "New favorite view"
-msgstr "Nueva vista principal"
-
-#: homeviews.py:191
+#: homeviews.py:220
 msgid "Icon"
 msgstr "Icono"
 
-#: homeviews.py:192
+#: homeviews.py:221
 msgid "For see icons, restart sugar is needed."
 msgstr "Para ver los iconos, es necesario reiniciar sugar."
 
-#: homeviews.py:208
+#: homeviews.py:229
+msgid "View Name"
+msgstr "Nombre de la vista"
+
+#: homeviews.py:230
+msgid "For seeing View name changes, restarting Sugar is required."
+msgstr "Para que el nombre de la vista principal cambie, "
+"es necesario reiniciar sugar."
+
+#: homeviews.py:247
 msgid "Set toolbar icon"
 msgstr "Cambiar el icono del toolbar"
 
-#: homeviews.py:212
+#: homeviews.py:251
 msgid "Set the icon of favorites list"
 msgstr "Cambiar el icono de la vista de favoritos"
 
-#: homeviews.py:216
+#: homeviews.py:257
+msgid "Favorite view name"
+msgstr "Nombre de la vista principal"
+
+#: homeviews.py:264
+msgid "Name of favorite view"
+msgstr "Nombre de la vista principal"
+
+#: homeviews.py:270
 msgid "Remove favorite view"
 msgstr "Eliminar vista principal"
 
@@ -72,7 +85,7 @@ msgstr "Acciones"
 
 #: icondialog.py:30 icondialog.py:84
 msgid "Emblems"
-msgstr "Emblemas"
+msgstr "Embemas"
 
 #: icondialog.py:30 icondialog.py:88 icondialog.py:216
 msgid "Documents"
@@ -80,4 +93,4 @@ msgstr "Documentos"
 
 #: icondialog.py:159
 msgid "Select an icon"
-msgstr "Selecciona un icono"
+msgstr "Seleccione un icono"

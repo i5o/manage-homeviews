@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-11 21:48-0200\n"
+"POT-Creation-Date: 2013-12-19 12:27-0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,46 +21,58 @@ msgstr ""
 msgid "Manage HomeViews"
 msgstr ""
 
-#: homeviews.py:87
+#: homeviews.py:94
 msgid "Add new favorite view"
 msgstr ""
 
-#: homeviews.py:132
+#: homeviews.py:149 homeviews.py:177
 #, python-format
 msgid "Favorites view %d"
 msgstr ""
 
-#: homeviews.py:148
+#: homeviews.py:167
 msgid "Limit reached"
 msgstr ""
 
-#: homeviews.py:149
+#: homeviews.py:168
 msgid ""
 "You have reached the maximum limit of favorites views, please delete some "
 "before continuing."
 msgstr ""
 
-#: homeviews.py:156
-msgid "New favorite view"
-msgstr ""
-
-#: homeviews.py:191
+#: homeviews.py:220
 msgid "Icon"
 msgstr ""
 
-#: homeviews.py:192
+#: homeviews.py:221
 msgid "For see icons, restart sugar is needed."
 msgstr ""
 
-#: homeviews.py:208
+#: homeviews.py:229
+msgid "View Name"
+msgstr ""
+
+#: homeviews.py:230
+msgid "For seeing View name changes, restarting Sugar is required."
+msgstr ""
+
+#: homeviews.py:247
 msgid "Set toolbar icon"
 msgstr ""
 
-#: homeviews.py:212
+#: homeviews.py:251
 msgid "Set the icon of favorites list"
 msgstr ""
 
-#: homeviews.py:216
+#: homeviews.py:257
+msgid "Favorite view name"
+msgstr ""
+
+#: homeviews.py:264
+msgid "Name of favorite view"
+msgstr ""
+
+#: homeviews.py:270
 msgid "Remove favorite view"
 msgstr ""
 
