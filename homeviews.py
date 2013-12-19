@@ -27,6 +27,7 @@ from sugar3.activity import activity
 from sugar3.graphics.toolbarbox import ToolbarBox
 from sugar3.graphics.toolbarbox import ToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
+from sugar3.graphics import style
 from sugar3.activity.widgets import ActivityButton
 from sugar3.activity.widgets import StopButton
 from sugar3.graphics.alert import NotifyAlert
@@ -48,13 +49,13 @@ class ManageViews(activity.Activity):
         activity.Activity.__init__(self, handle)
 
         self.build_toolbar()
-        self._canvas = ToolbarView(self)
+        self.__canvas = ToolbarView(self)
         width = Gdk.Screen.width()
-        self._canvas.set_size_request(width, 55)
+        self.__canvas.set_size_request(width, 55)
 
         fixed = Gtk.Fixed()
         center = (Gdk.Screen.height() / 2) - 55
-        fixed.put(self._canvas, 0, center)
+        fixed.put(self.__canvas, 0, center)
 
         eventbox = Gtk.EventBox()
         eventbox.add(fixed)
@@ -81,6 +82,9 @@ class ManageViews(activity.Activity):
 
         self.set_toolbar_box(toolbox)
 
+    def write_file(self, file_path):
+        self.__canvas.save_to_gconf()
+        return
 
 class ToolbarView(ToolbarBox):
     def __init__(self, activity):
@@ -96,11 +100,6 @@ class ToolbarView(ToolbarBox):
         self._view_icons = {}
         self._view_buttons = {}
         self._favorite_names = {}
-
-        if hasattr(desktop, 'get_favorite_names'):
-            self.favorite_names_enabled = True
-        else:
-            self.favorite_names_enabled = False
 
         separator = Gtk.SeparatorToolItem()
         separator.props.draw = False
@@ -144,12 +143,9 @@ class ToolbarView(ToolbarBox):
 
         current = 0
         for view_icon in view_icons:
-            if self.favorite_names_enabled:
-                try:
-                    label = favorite_names[current]
-                except IndexError:
-                    label = _('Favorites view %d') % (current + 1)
-            else:
+            try:
+                label = favorite_names[current]
+            except IndexError:
                 label = _('Favorites view %d') % (current + 1)
 
             button = ToolbarButton(label=label, icon_name=view_icon)
@@ -187,8 +183,7 @@ class ToolbarView(ToolbarBox):
         self._view_icons[button] = 'view-radial'
         self._favorite_icons[button] = 'emblem-favorite'
         self._view_buttons[button] = button
-        if self.favorite_names_enabled:
-            self._favorite_names[button] = label
+        self._favorite_names[button] = label
 
         self.insert(button, -1)
         self.save_to_gconf()
@@ -203,8 +198,7 @@ class ToolbarView(ToolbarBox):
         for button in self._view_buttons:
             view_icons.append(self._view_icons[button])
             favorite_icons.append(self._favorite_icons[button])
-            if self.favorite_names_enabled:
-                favorite_names.append(self._favorite_names[button])
+            favorite_names.append(button.props.page.favorite_name_entry.get_text())
 
         client = GConf.Client.get_default()
         SugarExt.gconf_client_set_string_list(client,
@@ -215,10 +209,9 @@ class ToolbarView(ToolbarBox):
                                               _VIEW_KEY,
                                               view_icons)
 
-        if self.favorite_names_enabled:
-            SugarExt.gconf_client_set_string_list(client,
-                                                  _FAVORITE_NAME_KEY,
-                                                  favorite_names)
+        SugarExt.gconf_client_set_string_list(client,
+                                              _FAVORITE_NAME_KEY,
+                                              favorite_names)
 
         if icon:
             for x in self.activity._alerts:
@@ -261,9 +254,17 @@ class FavoritePage(Gtk.Toolbar):
         entry_toolitem = Gtk.ToolItem()
 
         self.favorite_name_entry = Gtk.Entry()
+        self.favorite_name_entry.set_placeholder_text(_('Favorite view name'))
+        width = Gdk.Screen.width() - (style.STANDARD_ICON_SIZE * 12)
+        entry_toolitem.set_size_request(width, 55)
         self.favorite_name_entry.set_text(label)
         self.favorite_name_entry.connect("activate", self.edited_view_name)
         entry_toolitem.add(self.favorite_name_entry)
+
+        label = Gtk.Label(_('Name of favorite view') + '\t')
+        label.modify_fg(Gtk.StateType.NORMAL, Gdk.color_parse('white'))
+        tool_label = Gtk.ToolItem()
+        tool_label.add(label)
 
         self.remove_btn = ToolButton('list-remove')
         self.remove_btn.set_tooltip(_('Remove favorite view'))
@@ -275,8 +276,8 @@ class FavoritePage(Gtk.Toolbar):
 
         self.insert(self.set_view_icon, -1)
         self.insert(self.set_favorite_icon, -1)
-        if self.toolbar.favorite_names_enabled:
-            self.insert(entry_toolitem, -1)
+        self.insert(tool_label, -1)
+        self.insert(entry_toolitem, -1)
         self.insert(separator, -1)
         self.insert(self.remove_btn, -1)
         self.show_all()
