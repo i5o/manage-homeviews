@@ -85,7 +85,7 @@ msgstr "Acciones"
 
 #: icondialog.py:30 icondialog.py:84
 msgid "Emblems"
-msgstr "Embemas"
+msgstr "Emblemas"
 
 #: icondialog.py:30 icondialog.py:88 icondialog.py:216
 msgid "Documents"
