@@ -14,14 +14,15 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  021101301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 021101301, USA.
 
 from gettext import gettext as _
 
+from gi.repository import Gio
+from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import Gdk
-from gi.repository import GConf
-from gi.repository import SugarExt
 
 from sugar3.activity import activity
 from sugar3.graphics.toolbarbox import ToolbarBox
@@ -31,20 +32,15 @@ from sugar3.graphics import style
 from sugar3.activity.widgets import ActivityButton
 from sugar3.activity.widgets import StopButton
 from sugar3.graphics.alert import NotifyAlert
-from jarabe.model import desktop
 
 from icondialog import IconDialog
 
-_VIEW_DIR = '/desktop/sugar/desktop'
-_VIEW_ENTRY = 'view_icons'
-_FAVORITE_ENTRY = 'favorite_icons'
-_FAVORITE_NAME_ENTRY = 'favorite_names'
-_VIEW_KEY = '%s/%s' % (_VIEW_DIR, _VIEW_ENTRY)
-_FAVORITE_KEY = '%s/%s' % (_VIEW_DIR, _FAVORITE_ENTRY)
-_FAVORITE_NAME_KEY = '%s/%s' % (_VIEW_DIR, _FAVORITE_NAME_ENTRY)
+_DESKTOP_CONF_DIR = 'org.sugarlabs.desktop'
+_HOMEVIEWS_KEY = 'homeviews'
 
 
 class ManageViews(activity.Activity):
+
     def __init__(self, handle):
         activity.Activity.__init__(self, handle)
 
@@ -83,10 +79,12 @@ class ManageViews(activity.Activity):
         self.set_toolbar_box(toolbox)
 
     def write_file(self, file_path):
-        self.__canvas.save_to_gconf()
+        self.__canvas.save_to_gsettings()
         return
 
+
 class ToolbarView(ToolbarBox):
+
     def __init__(self, activity):
         ToolbarBox.__init__(self)
 
@@ -117,44 +115,27 @@ class ToolbarView(ToolbarBox):
         del(self._view_icons[item])
         del(self._favorite_icons[item])
         del(self._view_buttons[item])
-        self.save_to_gconf()
+        self.save_to_gsettings()
         self.toolbar.remove(item)
 
     def load_views(self):
-        client = GConf.Client.get_default()
-        options = client.get(_FAVORITE_KEY)
-        options2 = client.get(_VIEW_KEY)
-        options3 = client.get(_FAVORITE_NAME_KEY)
-
-        view_icons = []
-        favorites_icons = []
-        favorite_names = []
-
-        if options is not None and options2 is not None and \
-                options3 is not None:
-            for gval in options.get_list():
-                favorites_icons.append(gval.get_string())
-
-            for gval in options2.get_list():
-                view_icons.append(gval.get_string())
-
-            for gval in options3.get_list():
-                favorite_names.append(gval.get_string())
+        settings = Gio.Settings(_DESKTOP_CONF_DIR)
+        data = settings.get_value('homeviews').unpack()
 
         current = 0
-        for view_icon in view_icons:
-            try:
-                label = favorite_names[current]
-            except IndexError:
-                label = _('Favorites view %d') % (current + 1)
+        for view in data:
+            label = _('Favorites view %d') % (current + 1)
+
+            print view, data
+            view_icon = view['view-icon']
+            favorite_icon = view['favorite-icon']
 
             button = ToolbarButton(label=label, icon_name=view_icon)
-            page = FavoritePage(button, self, view_icon,
-                                favorites_icons[current], label)
+            page = FavoritePage(button, self, view_icon, favorite_icon, label)
             button.set_page(page)
             self.insert(button, -1)
             self._view_icons[button] = view_icon
-            self._favorite_icons[button] = favorites_icons[current]
+            self._favorite_icons[button] = favorite_icon
             self._view_buttons[button] = button
             self._favorite_names[button] = label
             current += 1
@@ -186,33 +167,22 @@ class ToolbarView(ToolbarBox):
         self._favorite_names[button] = label
 
         self.insert(button, -1)
-        self.save_to_gconf()
+        self.save_to_gsettings()
         self.show_all()
 
-    def save_to_gconf(self, icon=False, name=False):
+    def save_to_gsettings(self, icon=False, name=False):
 
-        view_icons = []
-        favorite_icons = []
-        favorite_names = []
+        gsettings = Gio.Settings(_DESKTOP_CONF_DIR)
+        homeviews = []
 
         for button in self._view_buttons:
-            view_icons.append(self._view_icons[button])
-            favorite_icons.append(self._favorite_icons[button])
-            favorite_names.append(button.props.page.favorite_name_entry.get_text())
+            homeview = {'layout': 'ring-layout',
+                        'view-icon': self._view_icons[button],
+                        'favorite-icon': self._favorite_icons[button]}
+            homeviews.append(homeview)
 
-        client = GConf.Client.get_default()
-        SugarExt.gconf_client_set_string_list(client,
-                                              _FAVORITE_KEY,
-                                              favorite_icons)
-
-        SugarExt.gconf_client_set_string_list(client,
-                                              _VIEW_KEY,
-                                              view_icons)
-
-        SugarExt.gconf_client_set_string_list(client,
-                                              _FAVORITE_NAME_KEY,
-                                              favorite_names)
-
+        variant = GLib.Variant('aa{ss}', homeviews)
+        gsettings.set_value(_HOMEVIEWS_KEY, variant)
         if icon:
             for x in self.activity._alerts:
                 self.activity.remove_alert(x)
@@ -235,6 +205,7 @@ class ToolbarView(ToolbarBox):
 
 
 class FavoritePage(Gtk.Toolbar):
+
     def __init__(self, button, toolbar, view_icon, favorite_icon, label):
         Gtk.Toolbar.__init__(self)
 
@@ -300,7 +271,7 @@ class FavoritePage(Gtk.Toolbar):
                 self.toolbar._view_icons[self.button] = response
                 self.button.set_icon_name(response)
 
-            self.toolbar.save_to_gconf(True)
+            self.toolbar.save_to_gsettings(True)
 
     def remove_view(self, widget):
         self.button.set_expanded(False)
@@ -310,4 +281,4 @@ class FavoritePage(Gtk.Toolbar):
         label = entry.get_text()
         self.toolbar._favorite_names[self.button] = label
 
-        self.toolbar.save_to_gconf(False, True)
+        self.toolbar.save_to_gsettings(False, True)

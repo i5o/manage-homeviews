@@ -14,7 +14,8 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 import shutil
 from gi.repository import Gtk
@@ -41,56 +42,56 @@ def get_document_icons():
 
 SUGAR_ICONS = {
     _('Actions'): ['media-playlist-repeat-insensitive',
-    'media-playlist-shuffle-insensitive',
-    'format-justify-left',
-    'cell-height',
-    'media-playback-stop-insensitive',
-    'select-all', 'format-columns-triple', 'column-insert',
-    'go-right', 'cell-format', 'format-justify-right', 'row-insert',
-    'entry-search', 'invite', 'format-text-underline', 'entry-stop',
-    'view-return', 'transfer-from-text-uri-list', 'cell-size', 'column-remove',
-    'insert-image', 'edit-clear', 'view-radial', 'view-lastedit',
-    'media-seek-forward-insensitive', 'row-remove', 'zoom-home',
-    'zoom-best-fit', 'media-playlist-repeat', 'media-eject-insensitive',
-    'view-fullscreen', 'format-text-leading', 'transfer-from-text-x-generic',
-    'select-none', 'toolbar-view', 'media-playback-pause', 'format-text-bold',
-    'media-playback-start-insensitive', 'go-home', 'view-freeform', 'go-next',
-    'transfer-from-image-x-generic', 'media-seek-backward', 'list-add',
-    'edit-description', 'toolbar-colors', 'cell-width',
-    'transfer-from-audio-x-generic', 'zoom-in', 'zoom-groups',
-    'media-seek-forward', 'go-up', 'view-list', 'format-justify-center',
-    'transfer-from', 'media-playback-pause-insensitive', 'media-playback-stop',
-    'go-previous', 'go-left', 'transfer-from-video-x-generic',
-    'media-playlist-shuffle', 'zoom-out', 'toolbar-edit', 'go-next-paired',
-    'system-logout', 'view-source', 'tray-hide', 'edit-copy', 'insert-table',
-    'view-size', 'format-justify-fill', 'go-down', 'format-columns-single',
-    'transfer-to-text-uri-list', 'activity-stop',
-    'transfer-to-audio-x-generic', 'view-box', 'zoom-original',
-    'edit-undo', 'document-send', 'view-refresh',
-    'document-save', 'system-shutdown', 'entry-refresh', 'dialog-cancel',
-    'system-search', 'transfer-to-image-x-generic',
-    'transfer-from-application-octet-stream',
-    'media-seek-backward-insensitive', 'dialog-ok', 'edit-redo',
-    'view-created', 'activity-start', 'format-text-size', 'view-triangle',
-    'entry-cancel', 'media-eject', 'edit-paste', 'tray-show',
-    'transfer-to-video-x-generic', 'transfer-to', 'view-details',
-    'system-restart', 'zoom-activity', 'media-record',
-    'transfer-to-text-x-generic', 'zoom-to-width', 'format-columns-double',
-    'format-text-italic', 'tray-favourite', 'list-remove',
-    'transfer-to-application-octet-stream', 'view-spiral',
-    'media-record-insensitive', 'edit-delete', 'toolbar-help',
-    'edit-duplicate', 'media-playback-start', 'zoom-neighborhood',
-    'go-previous-paired'],
+                   'media-playlist-shuffle-insensitive',
+                   'format-justify-left',
+                   'cell-height',
+                   'media-playback-stop-insensitive',
+                   'select-all', 'format-columns-triple', 'column-insert',
+                   'go-right', 'cell-format', 'format-justify-right', 'row-insert',
+                   'entry-search', 'invite', 'format-text-underline', 'entry-stop',
+                   'view-return', 'transfer-from-text-uri-list', 'cell-size', 'column-remove',
+                   'insert-image', 'edit-clear', 'view-radial', 'view-lastedit',
+                   'media-seek-forward-insensitive', 'row-remove', 'zoom-home',
+                   'zoom-best-fit', 'media-playlist-repeat', 'media-eject-insensitive',
+                   'view-fullscreen', 'format-text-leading', 'transfer-from-text-x-generic',
+                   'select-none', 'toolbar-view', 'media-playback-pause', 'format-text-bold',
+                   'media-playback-start-insensitive', 'go-home', 'view-freeform', 'go-next',
+                   'transfer-from-image-x-generic', 'media-seek-backward', 'list-add',
+                   'edit-description', 'toolbar-colors', 'cell-width',
+                   'transfer-from-audio-x-generic', 'zoom-in', 'zoom-groups',
+                   'media-seek-forward', 'go-up', 'view-list', 'format-justify-center',
+                   'transfer-from', 'media-playback-pause-insensitive', 'media-playback-stop',
+                   'go-previous', 'go-left', 'transfer-from-video-x-generic',
+                   'media-playlist-shuffle', 'zoom-out', 'toolbar-edit', 'go-next-paired',
+                   'system-logout', 'view-source', 'tray-hide', 'edit-copy', 'insert-table',
+                   'view-size', 'format-justify-fill', 'go-down', 'format-columns-single',
+                   'transfer-to-text-uri-list', 'activity-stop',
+                   'transfer-to-audio-x-generic', 'view-box', 'zoom-original',
+                   'edit-undo', 'document-send', 'view-refresh',
+                   'document-save', 'system-shutdown', 'entry-refresh', 'dialog-cancel',
+                   'system-search', 'transfer-to-image-x-generic',
+                   'transfer-from-application-octet-stream',
+                   'media-seek-backward-insensitive', 'dialog-ok', 'edit-redo',
+                   'view-created', 'activity-start', 'format-text-size', 'view-triangle',
+                   'entry-cancel', 'media-eject', 'edit-paste', 'tray-show',
+                   'transfer-to-video-x-generic', 'transfer-to', 'view-details',
+                   'system-restart', 'zoom-activity', 'media-record',
+                   'transfer-to-text-x-generic', 'zoom-to-width', 'format-columns-double',
+                   'format-text-italic', 'tray-favourite', 'list-remove',
+                   'transfer-to-application-octet-stream', 'view-spiral',
+                   'media-record-insensitive', 'edit-delete', 'toolbar-help',
+                   'edit-duplicate', 'media-playback-start', 'zoom-neighborhood',
+                   'go-previous-paired'],
     _('Emblems'): ['emblem-busy', 'emblem-charging', 'emblem-downloads',
-    'emblem-favorite', 'emblem-locked', 'emblem-notification',
-    'emblem-outofrange', 'emblem-question', 'emblem-view-source',
-    'emblem-warning'],
+                   'emblem-favorite', 'emblem-locked', 'emblem-notification',
+                   'emblem-outofrange', 'emblem-question', 'emblem-view-source',
+                   'emblem-warning'],
     _('Documents'): get_document_icons()
 }
 
 
-
 class IconDialog(Gtk.Window):
+
     def __init__(self):
         Gtk.Window.__init__(self)
         self.ensure_sugar_structure()
@@ -131,9 +132,9 @@ class IconDialog(Gtk.Window):
         sugar_theme = os.path.join(sugar, "index.theme")
 
         theme_data = "[Icon Theme]\nName=Sugar\nComment=User-defined" \
-                    " Sugar theme\n\nDirectories=scalable/device\n\n[scalable" \
-                    "/device]\nSize=55\nMinSize=32\nMaxSize=256\n" \
-                    "Context=Device\nType=Scalable"
+            " Sugar theme\n\nDirectories=scalable/device\n\n[scalable" \
+            "/device]\nSize=55\nMinSize=32\nMaxSize=256\n" \
+            "Context=Device\nType=Scalable"
 
         if not os.path.exists(icons):
             os.mkdir(icons)
@@ -152,13 +153,12 @@ class IconDialog(Gtk.Window):
         if not os.path.exists(emblems):
             os.mkdir(emblems)
 
-
     def build_toolbar(self):
         toolbox = ToolbarBox()
 
         label = Gtk.Label("\t" + _('Select an icon'))
         label.modify_fg(Gtk.StateType.NORMAL,
-            Gdk.color_parse('white'))
+                        Gdk.color_parse('white'))
 
         item = Gtk.ToolItem()
         item.add(label)
@@ -202,7 +202,6 @@ class IconDialog(Gtk.Window):
 
         store = Gtk.ListStore(GdkPixbuf.Pixbuf, str, str)
 
-
         icon_view = Gtk.IconView.new_with_model(store)
         icon_view.set_selection_mode(Gtk.SelectionMode.SINGLE)
         icon_view.connect('selection-changed', self.set_icon, store)
@@ -211,13 +210,13 @@ class IconDialog(Gtk.Window):
 
         for icon in icons:
             info = self.theme.lookup_icon(icon, 55,
-                    Gtk.IconLookupFlags.FORCE_SVG)
+                                          Gtk.IconLookupFlags.FORCE_SVG)
             icon_path = info.get_filename()
             if category == _('Documents'):
                 icon_path = os.path.join(get_documents_path(), icon + ".svg")
 
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(
-                        icon_path, 55, 55)
+                icon_path, 55, 55)
             store.insert(-1, [pixbuf, icon, icon_path])
 
         expand = Gtk.Expander()
