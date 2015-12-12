@@ -124,9 +124,11 @@ class ToolbarView(ToolbarBox):
 
         current = 0
         for view in data:
-            label = _('Favorites view %d') % (current + 1)
+            if 'view-label' in view:
+                label = view['view-label']
+            else:
+                label = _('Favorites view %d') % (current + 1)
 
-            print view, data
             view_icon = view['view-icon']
             favorite_icon = view['favorite-icon']
 
@@ -178,7 +180,8 @@ class ToolbarView(ToolbarBox):
         for button in self._view_buttons:
             homeview = {'layout': 'ring-layout',
                         'view-icon': self._view_icons[button],
-                        'favorite-icon': self._favorite_icons[button]}
+                        'favorite-icon': self._favorite_icons[button],
+                        'view-label': self._favorite_names[button]}
             homeviews.append(homeview)
 
         variant = GLib.Variant('aa{ss}', homeviews)
